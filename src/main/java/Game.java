@@ -10,7 +10,7 @@ import java.io.IOException;
 public class Game {
     private static Terminal terminal;
     private static Screen screen;
-    private static Hero hero;
+    private static Arena arena;
 
     public static void main(String[] args) throws IOException {
         Game game = new Game();
@@ -18,7 +18,7 @@ public class Game {
     }
     public Game() throws IOException {
         try {
-            hero = new Hero(10, 10);
+            arena = new Arena(20, 20);
             terminal = new DefaultTerminalFactory().createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null); // we don't need a cursor
@@ -31,29 +31,13 @@ public class Game {
 
     private static void draw() throws IOException {
         screen.clear();
-        hero.draw(screen);
+        arena.draw(screen.newTextGraphics());
         screen.refresh();
     }
 
     private static void processKey(KeyStroke key) throws IOException {
-        System.out.println(key);
-        switch (key.getKeyType()) {
-            case ArrowUp:
-                moveHero(hero.moveUp());
-                break;
-            case ArrowDown:
-                moveHero(hero.moveDown());
-                break;
-            case ArrowLeft:
-                moveHero(hero.moveLeft());
-                break;
-            case ArrowRight:
-                moveHero(hero.moveRight());
-                break;
-            case Character:
-                if (key.getCharacter() == 'q') screen.close();
-                break;
-        }
+        if (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q') screen.close();
+        else arena.processKey(key);
     }
     public static void run() throws IOException {
         while (true) {
@@ -62,9 +46,5 @@ public class Game {
             if (key.getKeyType() == KeyType.EOF) break;
             else processKey(key);
         }
-    }
-
-    private static void moveHero(Position position) {
-        hero.setPosition(position);
     }
 }

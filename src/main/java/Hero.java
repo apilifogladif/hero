@@ -1,13 +1,14 @@
-import com.googlecode.lanterna.TextCharacter;
-import com.googlecode.lanterna.screen.Screen;
+import com.googlecode.lanterna.SGR;
+import com.googlecode.lanterna.TerminalPosition;
+import com.googlecode.lanterna.TextColor;
+import com.googlecode.lanterna.graphics.TextGraphics;
 
 
 public class Hero {
     private static Position position;
 
     public Hero(int a, int b) {
-        Position.setX(a);
-        Position.setY(b);
+        position = new Position(a, b);
     }
     public static Position moveUp() {
         return new Position(Position.getX(), Position.getY() - 1);
@@ -21,12 +22,12 @@ public class Hero {
     public static Position moveLeft() {
         return new Position(Position.getX() - 1, Position.getY());
     }
-    public static void draw(Screen screen) {
-        screen.setCharacter(Position.getX(), Position.getY(), TextCharacter.fromCharacter('X')[0]);
-    }
+    public static void draw(TextGraphics graphics) {
+        graphics.setForegroundColor(TextColor.Factory.fromString("#FFFF33"));
+                graphics.enableModifiers(SGR.BOLD);
+        graphics.putString(new TerminalPosition(position.getX(), position.getY()), "X");    }
 
-    public void setPosition(Position pos) {
-        Position.setX(pos.getX());
-        Position.setY(pos.getY());
+    public void setPosition(Position newPos) {
+        position.setPosition(newPos);
     }
 }

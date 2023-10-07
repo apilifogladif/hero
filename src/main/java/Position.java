@@ -22,6 +22,9 @@ public class Position {
         setX(a);
         setY(b);
     }
-
+    public static void setPosition(Position pos) {
+        setX(pos.getX());
+        setY(pos.getY());
+    }
 
 }
