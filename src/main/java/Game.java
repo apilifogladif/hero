@@ -1,4 +1,3 @@
-import com.googlecode.lanterna.TextCharacter;
 import com.googlecode.lanterna.input.KeyStroke;
 import com.googlecode.lanterna.input.KeyType;
 import com.googlecode.lanterna.screen.Screen;
@@ -11,15 +10,15 @@ import java.io.IOException;
 public class Game {
     private static Terminal terminal;
     private static Screen screen;
-    private static int x = 10;
-    private static int y = 10;
+    private static Hero hero;
 
     public static void main(String[] args) throws IOException {
         Game game = new Game();
-        game.run();
+        run();
     }
     public Game() throws IOException {
         try {
+            hero = new Hero(10, 10);
             terminal = new DefaultTerminalFactory().createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null); // we don't need a cursor
@@ -32,7 +31,7 @@ public class Game {
 
     private static void draw() throws IOException {
         screen.clear();
-        screen.setCharacter(x, y, TextCharacter.fromCharacter('X')[0]);
+        hero.draw(screen);
         screen.refresh();
     }
 
@@ -40,16 +39,16 @@ public class Game {
         System.out.println(key);
         switch (key.getKeyType()) {
             case ArrowUp:
-                y--;
+                moveHero(hero.moveUp());
                 break;
             case ArrowDown:
-                y++;
+                moveHero(hero.moveDown());
                 break;
             case ArrowLeft:
-                x--;
+                moveHero(hero.moveLeft());
                 break;
             case ArrowRight:
-                x++;
+                moveHero(hero.moveRight());
                 break;
             case Character:
                 if (key.getCharacter() == 'q') screen.close();
@@ -63,5 +62,9 @@ public class Game {
             if (key.getKeyType() == KeyType.EOF) break;
             else processKey(key);
         }
+    }
+
+    private static void moveHero(Position position) {
+        hero.setPosition(position);
     }
 }
