@@ -6,12 +6,14 @@ import com.googlecode.lanterna.input.KeyStroke;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Arena {
     private int width;
     private int height;
     private final Hero hero;
     private final List<Wall> walls;
+    private List<Coin> coins;
 
     public int getWidth() {
         return width;
@@ -34,6 +36,7 @@ public class Arena {
         setWidth(w);
         setHeight(h);
         walls = createWalls();
+        coins = createCoins();
     }
     private List<Wall> createWalls() {
         List<Wall> ws = new ArrayList<>();
@@ -47,12 +50,22 @@ public class Arena {
         }
         return ws;
     }
+
+    private List<Coin> createCoins() {
+        Random random = new Random();
+        ArrayList<Coin> coins = new ArrayList<>();
+        for (int i = 0; i < 5; i++)
+            coins.add(new Coin(random.nextInt(width - 2) + 1,
+                    random.nextInt(height - 2) + 1));
+        return coins;
+    }
+
     public void draw(TextGraphics graphics) {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         hero.draw(graphics);
-        for (Wall wall : walls)
-            wall.draw(graphics);
+        for (Wall wall : walls) wall.draw(graphics);
+        for (Coin coin: coins) coin.draw(graphics);
     }
 
     public void processKey(KeyStroke key) {
@@ -75,7 +88,19 @@ public class Arena {
         }
     }
     private void moveHero(Position pos) {
-        if (canHeroMove(pos)) hero.setPosition(pos);
+        if (canHeroMove(pos)) {
+            retrieveCoins();
+            hero.setPosition(pos);
+        }
+    }
+
+    private void retrieveCoins(){
+        for(Coin coin : coins){
+            if(hero.getPosition().equals(coin.getPosition())) {
+                coins.remove(coin);
+                break;
+            }
+        }
     }
 
     private boolean canHeroMove(Position position) {
