@@ -5,24 +5,24 @@ import com.googlecode.lanterna.graphics.TextGraphics;
 
 
 public class Hero {
-    private static Position position;
+    protected Position position;
 
     public Hero(int a, int b) {
         position = new Position(a, b);
     }
-    public static Position moveUp() {
-        return new Position(Position.getX(), Position.getY() - 1);
+    public Position moveUp() {
+        return new Position(position.getX(), position.getY() - 1);
     }
-    public static Position moveDown() {
-        return new Position(Position.getX(), Position.getY() + 1);
+    public Position moveDown() {
+        return new Position(position.getX(), position.getY() + 1);
     }
-    public static Position moveRight() {
-        return new Position(Position.getX() + 1, Position.getY());
+    public Position moveRight() {
+        return new Position(position.getX() + 1, position.getY());
     }
-    public static Position moveLeft() {
-        return new Position(Position.getX() - 1, Position.getY());
+    public Position moveLeft() {
+        return new Position(position.getX() - 1, position.getY());
     }
-    public static void draw(TextGraphics graphics) {
+    public void draw(TextGraphics graphics) {
         graphics.setForegroundColor(TextColor.Factory.fromString("#FFFF33"));
                 graphics.enableModifiers(SGR.BOLD);
         graphics.putString(new TerminalPosition(position.getX(), position.getY()), "X");    }
@@ -30,4 +30,5 @@ public class Hero {
     public void setPosition(Position newPos) {
         position.setPosition(newPos);
     }
+
 }

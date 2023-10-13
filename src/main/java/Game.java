@@ -8,18 +8,16 @@ import com.googlecode.lanterna.terminal.Terminal;
 import java.io.IOException;
 
 public class Game {
-    private static Terminal terminal;
-    private static Screen screen;
-    private static Arena arena;
+    private Screen screen;
+    private Arena arena;
 
     public static void main(String[] args) throws IOException {
-        Game game = new Game();
-        run();
+        new Game().run();
     }
     public Game() throws IOException {
         try {
             arena = new Arena(20, 20);
-            terminal = new DefaultTerminalFactory().createTerminal();
+            Terminal terminal = new DefaultTerminalFactory().createTerminal();
             screen = new TerminalScreen(terminal);
             screen.setCursorPosition(null); // we don't need a cursor
             screen.startScreen(); // screens must be started
@@ -29,17 +27,17 @@ public class Game {
         }
     }
 
-    private static void draw() throws IOException {
+    private void draw() throws IOException {
         screen.clear();
         arena.draw(screen.newTextGraphics());
         screen.refresh();
     }
 
-    private static void processKey(KeyStroke key) throws IOException {
+    private void processKey(KeyStroke key) throws IOException {
         if (key.getKeyType() == KeyType.Character && key.getCharacter() == 'q') screen.close();
         else arena.processKey(key);
     }
-    public static void run() throws IOException {
+    public void run() throws IOException {
         while (true) {
             draw();
             KeyStroke key = screen.readInput();

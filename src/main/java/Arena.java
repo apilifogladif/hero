@@ -3,38 +3,56 @@ import com.googlecode.lanterna.TerminalSize;
 import com.googlecode.lanterna.TextColor;
 import com.googlecode.lanterna.graphics.TextGraphics;
 import com.googlecode.lanterna.input.KeyStroke;
-public class Arena {
-    private static int width;
-    private static int height;
-    private static Hero hero;
 
-    public static int getWidth() {
+import java.util.ArrayList;
+import java.util.List;
+
+public class Arena {
+    private int width;
+    private int height;
+    private final Hero hero;
+    private final List<Wall> walls;
+
+    public int getWidth() {
         return width;
     }
 
-    public static void setWidth(int width) {
-        Arena.width = width;
+    public void setWidth(int width) {
+        this.width = width;
     }
 
-    public static int getHeight() {
+    public int getHeight() {
         return height;
     }
 
-    public static void setHeight(int height) {
-        Arena.height = height;
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public Arena (int w, int h) {
         hero = new Hero(10, 10);
         setWidth(w);
         setHeight(h);
+        walls = createWalls();
     }
-
+    private List<Wall> createWalls() {
+        List<Wall> ws = new ArrayList<>();
+        for (int c = 0; c < width; c++) {
+            ws.add(new Wall(c, 0));
+            ws.add(new Wall(c, height - 1));
+        }
+        for (int r = 1; r < height - 1; r++) {
+            ws.add(new Wall(0, r));
+            ws.add(new Wall(width - 1, r));
+        }
+        return ws;
+    }
     public void draw(TextGraphics graphics) {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
-                graphics.fillRectangle(new TerminalPosition(0, 0), new
-                        TerminalSize(width, height), ' ');
+        graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         hero.draw(graphics);
+        for (Wall wall : walls)
+            wall.draw(graphics);
     }
 
     public void processKey(KeyStroke key) {
@@ -56,22 +74,19 @@ public class Arena {
                 break;
         }
     }
-    private static void moveHero(Position pos) {
-        if (canHeroMove(pos)) {
-            hero.setPosition(pos);
-        }
+    private void moveHero(Position pos) {
+        if (canHeroMove(pos)) hero.setPosition(pos);
     }
 
-    private static boolean canHeroMove(Position position) {
-        boolean b = false;
+    private boolean canHeroMove(Position position) {
         int x = position.getX();
         int y = position.getY();
-        System.out.println(width);
-        System.out.println(height);
-        System.out.println(x);
-        System.out.println(y);
-        if ((x >= 0 && x < width) && (y >= 0 && y < height)) b = true;
-        System.out.println(b);
-        return b;
+        //if (x < 0 || y < 0 || x > getWidth() - 1 || y > getHeight() - 1) return false;
+        for (Wall wall : walls) {
+            if (wall.getPosition().equals(position)) {
+                return false;
+            }
+        }
+        return true;
     }
 }

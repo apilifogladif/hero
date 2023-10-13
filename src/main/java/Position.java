@@ -1,30 +1,37 @@
 public class Position {
-    private static int x;
-    private static int y;
+    private int x;
+    private int y;
 
-    public static int getY() {
+    public int getY() {
         return y;
     }
 
-    public static void setY(int y) {
-        Position.y = y;
+    public void setY(int y) {
+        this.y = y;
     }
 
-    public static int getX() {
+    public int getX() {
         return x;
     }
 
-    public static void setX(int x) {
-        Position.x = x;
+    public void setX(int x) {
+        this.x = x;
     }
 
     public Position(int a, int b) {
         setX(a);
         setY(b);
     }
-    public static void setPosition(Position pos) {
+    public void setPosition(Position pos) {
         setX(pos.getX());
         setY(pos.getY());
     }
-
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null) return false;
+        if (getClass() != o.getClass()) return false;
+        Position p = (Position) o;
+        return x == p.getX() && y == p.getY();
+    }
 }
