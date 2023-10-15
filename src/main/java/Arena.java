@@ -13,7 +13,8 @@ public class Arena {
     private int height;
     private final Hero hero;
     private final List<Wall> walls;
-    private List<Coin> coins;
+    private final List<Coin> coins;
+    private final List<Monster> monsters;
 
     public int getWidth() {
         return width;
@@ -37,6 +38,7 @@ public class Arena {
         setHeight(h);
         walls = createWalls();
         coins = createCoins();
+        monsters = createMonsters();
     }
     private List<Wall> createWalls() {
         List<Wall> ws = new ArrayList<>();
@@ -60,12 +62,21 @@ public class Arena {
         return coins;
     }
 
+    private List<Monster> createMonsters() {
+        Random random = new Random();
+        ArrayList<Monster> monsters = new ArrayList<>();
+        for (int i = 0; i < 5; i++)
+            monsters.add(new Monster(random.nextInt(width - 2) + 1,
+                    random.nextInt(height - 2) + 1));
+        return monsters;
+    }
     public void draw(TextGraphics graphics) {
         graphics.setBackgroundColor(TextColor.Factory.fromString("#336699"));
         graphics.fillRectangle(new TerminalPosition(0, 0), new TerminalSize(width, height), ' ');
         hero.draw(graphics);
         for (Wall wall : walls) wall.draw(graphics);
         for (Coin coin: coins) coin.draw(graphics);
+        for(Monster monster : monsters) monster.draw(graphics);
     }
 
     public void processKey(KeyStroke key) {
@@ -86,6 +97,12 @@ public class Arena {
             case Character:
                 break;
         }
+        verifyMonsterCollisions();
+        moveMonsters();
+        verifyMonsterCollisions();
+    }
+    public void moveMonsters() {
+        for(Monster monster : monsters) monster.setPosition(monster.move(this));
     }
     private void moveHero(Position pos) {
         if (canHeroMove(pos)) {
@@ -94,6 +111,12 @@ public class Arena {
         }
     }
 
+    public boolean verifyMonsterCollisions() {
+        for (Monster monster: monsters) {
+            if (monster.getPosition().equals(hero.getPosition())) return true;
+        }
+        return false;
+    }
     private void retrieveCoins(){
         for(Coin coin : coins){
             if(hero.getPosition().equals(coin.getPosition())) {
